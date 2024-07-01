@@ -1,0 +1,50 @@
+<?php
+            session_start();
+            require_once("../bdd/bdd.php"); 
+
+            if(isset($_POST["identifiant"])){
+                $valide= !empty($_POST["identifiant"]) &&
+                         !empty($_POST["password"]); #non Vide
+                if(!$valide){
+                    echo "<p style='color:red'>Tous les champs sont obligatoire!</p>";
+                }else{
+                    $sql = "select identifiant, password from connexion where identifiant='".$_POST['identifiant']."'";
+                    $stmt = $pdo->query($sql, PDO::FETCH_ASSOC);
+                    $stmt->execute();
+
+                    $result= $stmt->fetch();
+                    $goodPassword= password_verify($_POST['password'], $result["password"]);
+
+                    if($_POST['password'] === $result["password"]){
+                        $_SESSION["User"]= $result;
+                        header('Location: /Projet_DevOps/View/page_service.php');
+                    }else{
+                        echo "<p style='color:red'>Identifiants incorrect !</p>";
+                    }
+                }
+            }else if(isset($_SESSION["User"])){
+                header('Location: /Projet_DevOps/View/page_service.php'); 
+            }
+    ?>
+inscription
+<?php
+include("../bdd/bdd.php");
+
+$sql= "INSERT INTO connexion(identifiant, password) VALUES (?,?) ";
+$stmt =  $pdo->prepare($sql);
+$stmt->execute([$_POST['identifiant'], $_POST['password']]);
+
+header('Location:http://localhost/site_aeroport/index.php');
+exit();
+
+?>
+<h3>Inscription</h3>
+
+        <label for="identifiant" id="identifiant"> Votre identifiant </label><br>
+        <input type="text" id="identifiant_input" name="identifiant"></input><br>
+
+        <label for="password"> Votre Mot de passe </label><br>
+        <input type="text" id="password_input" name="password"></input><br>
+
+        <input type="submit" value="inscription" id="bouton_inscription"></input>
+    </form>
