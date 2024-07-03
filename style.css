@@ -75,7 +75,10 @@ nav ul li input, nav ul li button {
 }
 
 
-
+h2 {
+  display: center;
+  text-align: justify;
+}
 
 .container {
   width: 100%;
